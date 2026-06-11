@@ -20,7 +20,7 @@ export function DeviceDetectionPanel() {
 
     setStage('scanning');
     addLog({ type: 'system', message: 'Initializing USB listener subsystem...', source: 'USB Monitor' });
-    addLog({ type: 'info', message: 'Scanning USB ports for supported vendors: 0x05AC (Apple), 0x04E8 (Samsung), 0x2717 (Xiaomi)...', source: 'USB Monitor' });
+    addLog({ type: 'info', message: 'Scanning USB bus 001 for supported Vendor IDs: 0x05AC, 0x04E8, 0x2717...', source: 'USB Monitor' });
 
     try {
       const res = await fetch('/api/detect', {
@@ -31,11 +31,18 @@ export function DeviceDetectionPanel() {
       const data = await res.json();
 
       if (data.detected) {
+        // Log multi-step detection from the API
+        if (data.detectionSteps) {
+          for (const step of data.detectionSteps) {
+            addLog({ type: 'info', message: `[${step.step}] ${step.detail}`, source: 'USB Monitor' });
+          }
+        }
         setDeviceInfo(data.deviceInfo);
-        addLog({ type: 'success', message: `Device detected! Vendor ID: ${data.deviceInfo.vendorId}`, source: 'USB Monitor' });
-        addLog({ type: 'success', message: `AI Classification: Brand identified as ${data.deviceInfo.brand} - ${data.deviceInfo.model}`, source: 'AI Engine' });
-        addLog({ type: 'info', message: `Connection Mode: ${data.deviceInfo.mode}`, source: 'USB Monitor' });
-        addLog({ type: 'info', message: `Battery Level: ${data.deviceInfo.batteryLevel}%`, source: 'Device Info' });
+        addLog({ type: 'success', message: `AI Classification: ${data.deviceInfo.brand} — ${data.deviceInfo.model} (${data.deviceInfo.modelCode})`, source: 'AI Engine' });
+        addLog({ type: 'info', message: `Chipset: ${data.deviceInfo.chipset} | Baseband: ${data.deviceInfo.baseband}`, source: 'Hardware Probe' });
+        addLog({ type: 'info', message: `Display: ${data.deviceInfo.display} | Storage: ${data.deviceInfo.storageCapacity}`, source: 'Hardware Probe' });
+        addLog({ type: 'info', message: `Security Patch: ${data.deviceInfo.securityPatch} | Region: ${data.deviceInfo.region}`, source: 'Security Check' });
+        addLog({ type: 'info', message: `Mode: ${data.deviceInfo.mode} | Battery: ${data.deviceInfo.batteryLevel}%`, source: 'Device Info' });
       }
     } catch {
       addLog({ type: 'error', message: 'Failed to scan USB devices. Please check connection and try again.', source: 'USB Monitor' });

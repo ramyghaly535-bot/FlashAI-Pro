@@ -5,8 +5,9 @@ import { useLanguageStore } from '@/store/language-store';
 import { t, isRTL } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
-import { Smartphone, Monitor, Cpu, HardDrive, Wifi, Battery, Fingerprint, Hash } from 'lucide-react';
+import { Smartphone, Monitor, Cpu, HardDrive, Wifi, Battery, Fingerprint, Hash, Shield, ScreenShare, MapPin, CircuitBoard, Radio } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const brandIcons: Record<string, { icon: typeof Smartphone; gradient: string }> = {
@@ -45,11 +46,17 @@ export function DeviceInfoCard() {
   const infoItems = [
     { label: t('device.brand', lang), value: deviceInfo.brand, icon: BrandIcon },
     { label: t('device.model', lang), value: deviceInfo.model, icon: Smartphone },
+    { label: t('device.model_code', lang), value: deviceInfo.modelCode, icon: CircuitBoard },
     { label: t('device.serial', lang), value: deviceInfo.serialNumber, icon: Hash },
     { label: t('device.vendor_id', lang), value: deviceInfo.vendorId, icon: Cpu },
     { label: t('device.product_id', lang), value: deviceInfo.productId, icon: Cpu },
     { label: t('device.storage', lang), value: deviceInfo.storageCapacity, icon: HardDrive },
     { label: t('device.os_version', lang), value: deviceInfo.currentOsVersion, icon: Wifi },
+    { label: t('device.chipset', lang), value: deviceInfo.chipset, icon: Cpu },
+    { label: t('device.baseband', lang), value: deviceInfo.baseband, icon: Radio },
+    { label: t('device.display', lang), value: deviceInfo.display, icon: ScreenShare },
+    { label: t('device.security_patch', lang), value: deviceInfo.securityPatch, icon: Shield },
+    { label: t('device.region', lang), value: deviceInfo.region, icon: MapPin },
     { label: t('device.connection_mode', lang), value: deviceInfo.mode, icon: Fingerprint },
   ];
 
@@ -73,13 +80,14 @@ export function DeviceInfoCard() {
             </Badge>
           </div>
         </CardHeader>
-        <CardContent className="space-y-0 p-0">
+        <CardContent className="p-0">
+          {/* Device header */}
           <div className="p-4 pb-3 flex items-center gap-3">
             <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${brandStyle.gradient} flex items-center justify-center shadow-lg`}>
               <BrandIcon className="h-6 w-6 text-white" />
             </div>
             <div className="flex-1 min-w-0">
-              <h3 className="text-base font-bold text-foreground truncate">{deviceInfo.model}</h3>
+              <h3 className="text-sm sm:text-base font-bold text-foreground truncate">{deviceInfo.model}</h3>
               <p className="text-xs text-muted-foreground">{deviceInfo.brand} • {deviceInfo.storageCapacity}</p>
             </div>
             <div className="flex flex-col items-center gap-0.5">
@@ -90,26 +98,29 @@ export function DeviceInfoCard() {
 
           <Separator className="bg-emerald-500/10" />
 
-          <div className="p-4 grid grid-cols-2 gap-x-4 gap-y-3">
-            {infoItems.map((item, index) => {
-              const ItemIcon = item.icon;
-              return (
-                <motion.div
-                  key={item.label}
-                  initial={{ opacity: 0, x: -5 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.3, delay: index * 0.05 }}
-                  className="space-y-0.5"
-                >
-                  <div className="flex items-center gap-1.5">
-                    <ItemIcon className="h-3 w-3 text-muted-foreground/50" />
-                    <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">{item.label}</span>
-                  </div>
-                  <p className="text-xs font-mono text-foreground/90 truncate" title={item.value}>{item.value}</p>
-                </motion.div>
-              );
-            })}
-          </div>
+          {/* Info grid - scrollable */}
+          <ScrollArea className="max-h-[280px] sm:max-h-[320px]">
+            <div className="p-4 grid grid-cols-2 gap-x-4 gap-y-2.5">
+              {infoItems.map((item, index) => {
+                const ItemIcon = item.icon;
+                return (
+                  <motion.div
+                    key={item.label}
+                    initial={{ opacity: 0, x: -5 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ duration: 0.2, delay: index * 0.03 }}
+                    className="space-y-0.5"
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <ItemIcon className="h-3 w-3 text-muted-foreground/50" />
+                      <span className="text-[10px] uppercase tracking-wider text-muted-foreground/70 font-medium">{item.label}</span>
+                    </div>
+                    <p className="text-[11px] font-mono text-foreground/90 truncate" title={item.value}>{item.value}</p>
+                  </motion.div>
+                );
+              })}
+            </div>
+          </ScrollArea>
         </CardContent>
       </Card>
     </motion.div>

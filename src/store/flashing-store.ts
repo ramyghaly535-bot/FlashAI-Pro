@@ -7,6 +7,7 @@ export type AppStage = 'idle' | 'scanning' | 'detected' | 'analyzing' | 'downloa
 export interface DeviceInfo {
   brand: DeviceBrand;
   model: string;
+  modelCode: string;
   serialNumber: string;
   mode: DeviceMode;
   vendorId: string;
@@ -14,6 +15,11 @@ export interface DeviceInfo {
   storageCapacity: string;
   currentOsVersion: string;
   batteryLevel: number;
+  chipset: string;
+  baseband: string;
+  securityPatch: string;
+  display: string;
+  region: string;
 }
 
 export interface FirmwareInfo {
