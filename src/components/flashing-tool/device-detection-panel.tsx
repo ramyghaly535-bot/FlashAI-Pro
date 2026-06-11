@@ -1,6 +1,8 @@
 'use client';
 
 import { useFlashingStore } from '@/store/flashing-store';
+import { useLanguageStore } from '@/store/language-store';
+import { t, isRTL } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +11,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export function DeviceDetectionPanel() {
   const { stage, deviceConnected, deviceInfo, selectedBrand, setSelectedBrand, setStage, setDeviceInfo, addLog, clearDevice } = useFlashingStore();
+  const { lang } = useLanguageStore();
+  const rtl = isRTL(lang);
   const isScanning = stage === 'scanning';
 
   const handleStartScan = async () => {
@@ -47,7 +51,6 @@ export function DeviceDetectionPanel() {
 
   return (
     <Card className="border-emerald-500/20 bg-gradient-to-br from-card to-card/80 backdrop-blur-sm overflow-hidden relative">
-      {/* Subtle animated scan line */}
       {isScanning && (
         <motion.div
           className="absolute inset-0 bg-gradient-to-r from-transparent via-emerald-500/10 to-transparent z-0"
@@ -60,36 +63,35 @@ export function DeviceDetectionPanel() {
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <Usb className="h-4 w-4 text-emerald-400" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300">
-              USB Device Monitor
+              {t('usb.title', lang)}
             </span>
           </CardTitle>
           <div className="flex items-center gap-2">
             {deviceConnected && (
               <Badge variant="default" className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-xs">
-                <Radio className="h-3 w-3 mr-1 animate-pulse" />
-                Connected
+                <Radio className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'} animate-pulse`} />
+                {t('usb.connected', lang)}
               </Badge>
             )}
             {isScanning && (
               <Badge variant="secondary" className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-xs">
-                <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                Scanning
+                <Loader2 className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'} animate-spin`} />
+                {t('usb.scanning_badge', lang)}
               </Badge>
             )}
             {!deviceConnected && !isScanning && (
               <Badge variant="outline" className="text-muted-foreground text-xs">
-                <Cable className="h-3 w-3 mr-1" />
-                Waiting
+                <Cable className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'}`} />
+                {t('usb.waiting', lang)}
               </Badge>
             )}
           </div>
         </div>
       </CardHeader>
       <CardContent className="relative z-10 space-y-4">
-        {/* Brand selection */}
         {!deviceConnected && !isScanning && (
           <div className="space-y-2">
-            <p className="text-xs text-muted-foreground">Select device brand to scan (or auto-detect):</p>
+            <p className="text-xs text-muted-foreground">{t('usb.select_brand', lang)}</p>
             <div className="flex gap-2">
               {brandOptions.map((brand) => {
                 const Icon = brand.icon;
@@ -115,7 +117,6 @@ export function DeviceDetectionPanel() {
           </div>
         )}
 
-        {/* Scanning animation */}
         <AnimatePresence>
           {isScanning && (
             <motion.div
@@ -133,7 +134,6 @@ export function DeviceDetectionPanel() {
                   />
                   <Zap className="h-6 w-6 text-emerald-400" />
                 </div>
-                {/* Pulse rings */}
                 {[0, 1, 2].map((i) => (
                   <motion.div
                     key={i}
@@ -144,13 +144,12 @@ export function DeviceDetectionPanel() {
                 ))}
               </div>
               <p className="text-xs text-emerald-400/80 font-mono animate-pulse">
-                Scanning USB ports...
+                {t('usb.scanning_msg', lang)}
               </p>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Connected device summary */}
         <AnimatePresence>
           {deviceConnected && deviceInfo && (
             <motion.div
@@ -180,20 +179,19 @@ export function DeviceDetectionPanel() {
                   addLog({ type: 'warning', message: 'Device disconnected by user.', source: 'System' });
                 }}
               >
-                Disconnect Device
+                {t('usb.disconnect', lang)}
               </Button>
             </motion.div>
           )}
         </AnimatePresence>
 
-        {/* Scan button */}
         {!deviceConnected && !isScanning && (
           <Button
             onClick={handleStartScan}
             className="w-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all duration-300"
           >
-            <Usb className="h-4 w-4 mr-2" />
-            {selectedBrand ? `Scan for ${selectedBrand} Device` : 'Auto-Detect Device'}
+            <Usb className={`h-4 w-4 ${rtl ? 'ml-2' : 'mr-2'}`} />
+            {selectedBrand ? t('usb.scan_brand', lang, { brand: selectedBrand }) : t('usb.auto_detect', lang)}
           </Button>
         )}
       </CardContent>

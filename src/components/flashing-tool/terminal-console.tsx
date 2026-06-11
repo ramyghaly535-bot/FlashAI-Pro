@@ -2,11 +2,13 @@
 
 import { useEffect, useRef } from 'react';
 import { useFlashingStore, type LogEntry } from '@/store/flashing-store';
+import { useLanguageStore } from '@/store/language-store';
+import { t, isRTL } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Terminal, Trash2, Copy, CheckCircle2, AlertTriangle, Info, XCircle, Server } from 'lucide-react';
+import { Terminal, Trash2, CheckCircle2, AlertTriangle, Info, XCircle, Server } from 'lucide-react';
 
 const logTypeStyles: Record<LogEntry['type'], { color: string; icon: typeof Info; prefix: string }> = {
   info: { color: 'text-sky-400', icon: Info, prefix: 'INFO' },
@@ -23,6 +25,7 @@ function formatTime(date: Date): string {
 
 export function TerminalConsole() {
   const { logs, clearLogs } = useFlashingStore();
+  const { lang } = useLanguageStore();
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -41,12 +44,12 @@ export function TerminalConsole() {
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <Terminal className="h-4 w-4 text-emerald-400" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300">
-              System Console
+              {lang === 'ar' ? 'وحدة التحكم' : 'System Console'}
             </span>
           </CardTitle>
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-muted-foreground text-[10px] font-mono">
-              {logs.length} entries
+              {logs.length} {lang === 'ar' ? 'سجل' : 'entries'}
             </Badge>
             {logs.length > 0 && (
               <Button
@@ -67,11 +70,11 @@ export function TerminalConsole() {
             {logs.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-10 text-muted-foreground/30">
                 <Terminal className="h-8 w-8 mb-2" />
-                <p className="text-xs">Console output will appear here</p>
-                <p className="text-[10px] mt-1">Start scanning to see real-time logs</p>
+                <p className="text-xs">{lang === 'ar' ? 'ستظهر المخرجات هنا' : 'Console output will appear here'}</p>
+                <p className="text-[10px] mt-1">{lang === 'ar' ? 'ابدأ الفحص لرؤية السجلات' : 'Start scanning to see real-time logs'}</p>
               </div>
             ) : (
-              <div className="p-3 space-y-0.5 font-mono text-[11px] leading-relaxed">
+              <div className="p-3 space-y-0.5 font-mono text-[11px] leading-relaxed" dir="ltr">
                 {logs.map((log) => {
                   const style = logTypeStyles[log.type];
                   const Icon = style.icon;

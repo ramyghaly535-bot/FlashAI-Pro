@@ -1,27 +1,30 @@
 'use client';
 
 import { useFlashingStore } from '@/store/flashing-store';
+import { useLanguageStore } from '@/store/language-store';
+import { t, isRTL } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Separator } from '@/components/ui/separator';
 import { DeviceDetectionPanel } from '@/components/flashing-tool/device-detection-panel';
 import { DeviceInfoCard } from '@/components/flashing-tool/device-info-card';
 import { FirmwareAnalysisPanel } from '@/components/flashing-tool/firmware-analysis-panel';
 import { DownloadManager } from '@/components/flashing-tool/download-manager';
 import { TerminalConsole } from '@/components/flashing-tool/terminal-console';
 import { StatusBar } from '@/components/flashing-tool/status-bar';
-import { Zap, RotateCcw, Github, Shield, Cpu, Smartphone } from 'lucide-react';
+import { Zap, RotateCcw, Shield, Cpu, Smartphone, Languages } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
-const navItems = [
-  { icon: Cpu, label: 'Dashboard', active: true },
-  { icon: Smartphone, label: 'Devices', active: false },
-  { icon: Shield, label: 'Security', active: false },
-];
-
 export default function FlashingToolPage() {
-  const { stage, deviceConnected, logs, reset, addLog } = useFlashingStore();
+  const { stage, reset, addLog } = useFlashingStore();
+  const { lang, toggleLang } = useLanguageStore();
+  const rtl = isRTL(lang);
+
+  const navItems = [
+    { icon: Cpu, labelKey: 'nav.dashboard' },
+    { icon: Smartphone, labelKey: 'nav.devices' },
+    { icon: Shield, labelKey: 'nav.security' },
+  ];
 
   const handleReset = () => {
     reset();
@@ -29,7 +32,7 @@ export default function FlashingToolPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#060d0a] text-foreground overflow-hidden">
+    <div className="min-h-screen flex flex-col bg-[#060d0a] text-foreground overflow-hidden" dir={rtl ? 'rtl' : 'ltr'}>
       {/* Animated background */}
       <div className="fixed inset-0 z-0 pointer-events-none">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-emerald-900/20 via-transparent to-transparent" />
@@ -57,28 +60,37 @@ export default function FlashingToolPage() {
             <div>
               <h1 className="text-base sm:text-lg font-bold tracking-tight">
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 via-teal-300 to-emerald-400">
-                  FlashAI Pro
+                  {t('app.name', lang)}
                 </span>
               </h1>
               <p className="text-[10px] text-muted-foreground hidden sm:block">
-                AI-Powered Multi-OS Mobile Flashing Engine v2.0
+                {t('app.subtitle', lang)}
               </p>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
             <Badge variant="outline" className="text-emerald-400 border-emerald-500/30 text-[10px] hidden sm:flex">
-              <Shield className="h-3 w-3 mr-1" />
-              End-to-End Encrypted
+              <Shield className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'}`} />
+              {t('header.encrypted', lang)}
             </Badge>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 gap-1.5 text-xs text-muted-foreground hover:text-foreground border border-border/50 hover:border-emerald-500/30"
+              onClick={toggleLang}
+            >
+              <Languages className="h-3.5 w-3.5" />
+              {lang === 'ar' ? 'EN' : 'عربي'}
+            </Button>
             <Button
               variant="ghost"
               size="sm"
               className="h-8 text-xs text-muted-foreground hover:text-foreground"
               onClick={handleReset}
             >
-              <RotateCcw className="h-3.5 w-3.5 mr-1.5" />
-              Reset
+              <RotateCcw className={`h-3.5 w-3.5 ${rtl ? 'ml-1.5' : 'mr-1.5'}`} />
+              {t('header.reset', lang)}
             </Button>
           </div>
         </div>
@@ -89,15 +101,15 @@ export default function FlashingToolPage() {
             const Icon = item.icon;
             return (
               <button
-                key={item.label}
+                key={item.labelKey}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all cursor-pointer ${
-                  item.active
+                  i === 0
                     ? 'bg-emerald-500/10 text-emerald-400'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/30'
                 }`}
               >
                 <Icon className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">{item.label}</span>
+                <span className="hidden sm:inline">{t(item.labelKey, lang)}</span>
               </button>
             );
           })}
@@ -118,10 +130,10 @@ export default function FlashingToolPage() {
             <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
                 <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-1">
-                  Smart Mobile Flashing
+                  {t('hero.title', lang)}
                 </h2>
                 <p className="text-xs sm:text-sm text-muted-foreground max-w-xl">
-                  AI-powered firmware analysis, multi-threaded download engine, and automated flashing for Apple, Samsung, and Xiaomi devices.
+                  {t('hero.desc', lang)}
                 </p>
                 <div className="flex items-center gap-3 mt-3">
                   {['Apple', 'Samsung', 'Xiaomi'].map((brand) => (
@@ -142,17 +154,17 @@ export default function FlashingToolPage() {
 
           {/* Main Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            {/* Left Column - Device Detection & Info */}
+            {/* Left Column */}
             <div className="lg:col-span-5 space-y-4">
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: rtl ? 20 : -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.1 }}
               >
                 <DeviceDetectionPanel />
               </motion.div>
               <motion.div
-                initial={{ opacity: 0, x: -20 }}
+                initial={{ opacity: 0, x: rtl ? 20 : -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.2 }}
               >
@@ -160,17 +172,17 @@ export default function FlashingToolPage() {
               </motion.div>
             </div>
 
-            {/* Right Column - AI Analysis & Download */}
+            {/* Right Column */}
             <div className="lg:col-span-7 space-y-4">
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: rtl ? -20 : 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.15 }}
               >
                 <FirmwareAnalysisPanel />
               </motion.div>
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
+                initial={{ opacity: 0, x: rtl ? -20 : 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.4, delay: 0.25 }}
               >
@@ -179,7 +191,7 @@ export default function FlashingToolPage() {
             </div>
           </div>
 
-          {/* Terminal Console - Full Width */}
+          {/* Terminal Console */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}

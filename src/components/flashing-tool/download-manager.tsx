@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useCallback } from 'react';
 import { useFlashingStore } from '@/store/flashing-store';
+import { useLanguageStore } from '@/store/language-store';
+import { t, isRTL } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
@@ -9,7 +11,9 @@ import { Download, CheckCircle2, Shield, Gauge, Layers, Clock } from 'lucide-rea
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function DownloadManager() {
-  const { stage, downloadProgress, setDownloadProgress, setStage, addLog, setFlashProgress, flashProgress, setFirmwareInfo, firmwareInfo, deviceInfo } = useFlashingStore();
+  const { stage, downloadProgress, setDownloadProgress, setStage, addLog, setFlashProgress, flashProgress, firmwareInfo, deviceInfo } = useFlashingStore();
+  const { lang } = useLanguageStore();
+  const rtl = isRTL(lang);
   const isDownloading = stage === 'downloading';
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -137,34 +141,34 @@ export function DownloadManager() {
               <>
                 <Gauge className="h-4 w-4 text-amber-400" />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-amber-400 to-orange-300">
-                  Flash Engine
+                  {t('download.flash_title', lang)}
                 </span>
               </>
             ) : (
               <>
                 <Download className="h-4 w-4 text-emerald-400" />
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300">
-                  Download Manager
+                  {t('download.title', lang)}
                 </span>
               </>
             )}
           </CardTitle>
           {stage === 'completed' && (
             <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">
-              <CheckCircle2 className="h-3 w-3 mr-1" />
-              Completed
+              <CheckCircle2 className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'}`} />
+              {t('download.completed_badge', lang)}
             </Badge>
           )}
           {isDownloading && (
             <Badge className="bg-sky-500/20 text-sky-400 border-sky-500/30 text-[10px]">
-              <Download className="h-3 w-3 mr-1 animate-bounce" />
-              Downloading
+              <Download className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'} animate-bounce`} />
+              {t('download.downloading_badge', lang)}
             </Badge>
           )}
           {isFlashing && stage !== 'completed' && (
             <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px]">
-              <Gauge className="h-3 w-3 mr-1 animate-pulse" />
-              Flashing
+              <Gauge className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'} animate-pulse`} />
+              {t('download.flash_badge', lang)}
             </Badge>
           )}
         </div>
@@ -173,7 +177,7 @@ export function DownloadManager() {
         {!isDownloading && !isFlashing && !downloadProgress && (
           <div className="flex flex-col items-center justify-center py-6 text-muted-foreground/50">
             <Download className="h-8 w-8 mb-2" />
-            <p className="text-xs">Awaiting firmware download</p>
+            <p className="text-xs">{t('download.awaiting', lang)}</p>
           </div>
         )}
 
@@ -186,15 +190,13 @@ export function DownloadManager() {
               exit={{ opacity: 0 }}
               className="space-y-4"
             >
-              {/* File name */}
               <div className="p-2.5 rounded-lg bg-sky-500/5 border border-sky-500/20">
                 <p className="text-xs font-mono text-sky-400/80 truncate">{downloadProgress.fileName}</p>
               </div>
 
-              {/* Progress bar */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground">Progress</span>
+                  <span className="text-xs text-muted-foreground">{t('download.progress', lang)}</span>
                   <span className="text-xs font-mono text-emerald-400">{downloadProgress.percentage.toFixed(1)}%</span>
                 </div>
                 <Progress
@@ -207,22 +209,21 @@ export function DownloadManager() {
                 </div>
               </div>
 
-              {/* Stats */}
               <div className="grid grid-cols-3 gap-2">
                 <div className="p-2 rounded-lg bg-muted/20 text-center">
                   <Gauge className="h-3 w-3 mx-auto mb-1 text-emerald-400" />
                   <p className="text-xs font-mono text-foreground">{downloadProgress.speed}</p>
-                  <p className="text-[10px] text-muted-foreground">Speed</p>
+                  <p className="text-[10px] text-muted-foreground">{t('download.speed', lang)}</p>
                 </div>
                 <div className="p-2 rounded-lg bg-muted/20 text-center">
                   <Layers className="h-3 w-3 mx-auto mb-1 text-emerald-400" />
                   <p className="text-xs font-mono text-foreground">{downloadProgress.threads}</p>
-                  <p className="text-[10px] text-muted-foreground">Threads</p>
+                  <p className="text-[10px] text-muted-foreground">{t('download.threads', lang)}</p>
                 </div>
                 <div className="p-2 rounded-lg bg-muted/20 text-center">
                   <Shield className="h-3 w-3 mx-auto mb-1 text-emerald-400" />
-                  <p className="text-xs font-mono text-foreground">{downloadProgress.integrityVerified ? 'Verified' : 'Pending'}</p>
-                  <p className="text-[10px] text-muted-foreground">Integrity</p>
+                  <p className="text-xs font-mono text-foreground">{downloadProgress.integrityVerified ? t('download.verified', lang) : t('download.pending', lang)}</p>
+                  <p className="text-[10px] text-muted-foreground">{t('download.integrity', lang)}</p>
                 </div>
               </div>
             </motion.div>
@@ -236,10 +237,9 @@ export function DownloadManager() {
               exit={{ opacity: 0 }}
               className="space-y-4"
             >
-              {/* Progress bar */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <span className="text-xs text-muted-foreground">Flashing Progress</span>
+                  <span className="text-xs text-muted-foreground">{t('download.flash_progress', lang)}</span>
                   <span className="text-xs font-mono text-amber-400">{flashProgress.percentage.toFixed(1)}%</span>
                 </div>
                 <Progress
@@ -248,17 +248,15 @@ export function DownloadManager() {
                 />
               </div>
 
-              {/* Current partition */}
               <div className="p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
-                <p className="text-[10px] uppercase tracking-wider text-amber-400/70 mb-1">Current Partition</p>
+                <p className="text-[10px] uppercase tracking-wider text-amber-400/70 mb-1">{t('download.current_partition', lang)}</p>
                 <p className="text-sm font-mono font-bold text-foreground">{flashProgress.currentPartition}</p>
                 <p className="text-[10px] text-muted-foreground mt-1">{flashProgress.currentOperation}</p>
               </div>
 
-              {/* Partition progress */}
               <div className="space-y-1.5">
                 <div className="flex justify-between text-[10px]">
-                  <span className="text-muted-foreground">Partitions</span>
+                  <span className="text-muted-foreground">{t('download.partitions', lang)}</span>
                   <span className="text-amber-400 font-mono">{flashProgress.completedPartitions}/{flashProgress.totalPartitions}</span>
                 </div>
                 <div className="flex gap-1 flex-wrap">
@@ -277,17 +275,16 @@ export function DownloadManager() {
                 </div>
               </div>
 
-              {/* Stats */}
               <div className="grid grid-cols-2 gap-2">
                 <div className="p-2 rounded-lg bg-muted/20 text-center">
                   <Gauge className="h-3 w-3 mx-auto mb-1 text-amber-400" />
                   <p className="text-xs font-mono text-foreground">{flashProgress.speed}</p>
-                  <p className="text-[10px] text-muted-foreground">Speed</p>
+                  <p className="text-[10px] text-muted-foreground">{t('download.speed', lang)}</p>
                 </div>
                 <div className="p-2 rounded-lg bg-muted/20 text-center">
                   <Clock className="h-3 w-3 mx-auto mb-1 text-amber-400" />
                   <p className="text-xs font-mono text-foreground">{flashProgress.eta}</p>
-                  <p className="text-[10px] text-muted-foreground">ETA</p>
+                  <p className="text-[10px] text-muted-foreground">{t('download.eta', lang)}</p>
                 </div>
               </div>
             </motion.div>
@@ -309,8 +306,8 @@ export function DownloadManager() {
                 <CheckCircle2 className="h-8 w-8 text-emerald-400" />
               </motion.div>
               <div className="text-center">
-                <p className="text-sm font-semibold text-emerald-400">Flash Successful!</p>
-                <p className="text-xs text-muted-foreground mt-1">Device is rebooting to factory state</p>
+                <p className="text-sm font-semibold text-emerald-400">{t('download.flash_success', lang)}</p>
+                <p className="text-xs text-muted-foreground mt-1">{t('download.rebooting_msg', lang)}</p>
               </div>
             </motion.div>
           )}

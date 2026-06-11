@@ -1,6 +1,8 @@
 'use client';
 
 import { useFlashingStore } from '@/store/flashing-store';
+import { useLanguageStore } from '@/store/language-store';
+import { t, isRTL } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Separator } from '@/components/ui/separator';
@@ -15,6 +17,7 @@ const brandIcons: Record<string, { icon: typeof Smartphone; gradient: string }> 
 
 export function DeviceInfoCard() {
   const { deviceInfo } = useFlashingStore();
+  const { lang } = useLanguageStore();
 
   if (!deviceInfo) {
     return (
@@ -22,14 +25,14 @@ export function DeviceInfoCard() {
         <CardHeader className="pb-3">
           <CardTitle className="flex items-center gap-2 text-sm font-semibold text-muted-foreground">
             <Cpu className="h-4 w-4" />
-            Device Information
+            {t('device.title', lang)}
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col items-center justify-center py-8 text-muted-foreground/50">
             <Smartphone className="h-10 w-10 mb-2" />
-            <p className="text-xs">No device connected</p>
-            <p className="text-[10px] mt-1">Connect a device via USB to see its details</p>
+            <p className="text-xs">{t('device.no_device', lang)}</p>
+            <p className="text-[10px] mt-1">{t('device.no_device_hint', lang)}</p>
           </div>
         </CardContent>
       </Card>
@@ -40,14 +43,14 @@ export function DeviceInfoCard() {
   const BrandIcon = brandStyle.icon;
 
   const infoItems = [
-    { label: 'Brand', value: deviceInfo.brand, icon: BrandIcon },
-    { label: 'Model', value: deviceInfo.model, icon: Smartphone },
-    { label: 'Serial Number', value: deviceInfo.serialNumber, icon: Hash },
-    { label: 'Vendor ID', value: deviceInfo.vendorId, icon: Cpu },
-    { label: 'Product ID', value: deviceInfo.productId, icon: Cpu },
-    { label: 'Storage', value: deviceInfo.storageCapacity, icon: HardDrive },
-    { label: 'OS Version', value: deviceInfo.currentOsVersion, icon: Wifi },
-    { label: 'Connection Mode', value: deviceInfo.mode, icon: Fingerprint },
+    { label: t('device.brand', lang), value: deviceInfo.brand, icon: BrandIcon },
+    { label: t('device.model', lang), value: deviceInfo.model, icon: Smartphone },
+    { label: t('device.serial', lang), value: deviceInfo.serialNumber, icon: Hash },
+    { label: t('device.vendor_id', lang), value: deviceInfo.vendorId, icon: Cpu },
+    { label: t('device.product_id', lang), value: deviceInfo.productId, icon: Cpu },
+    { label: t('device.storage', lang), value: deviceInfo.storageCapacity, icon: HardDrive },
+    { label: t('device.os_version', lang), value: deviceInfo.currentOsVersion, icon: Wifi },
+    { label: t('device.connection_mode', lang), value: deviceInfo.mode, icon: Fingerprint },
   ];
 
   return (
@@ -62,16 +65,15 @@ export function DeviceInfoCard() {
             <CardTitle className="flex items-center gap-2 text-sm font-semibold">
               <Cpu className="h-4 w-4 text-emerald-400" />
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300">
-                Device Information
+                {t('device.title', lang)}
               </span>
             </CardTitle>
             <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">
-              Identified
+              {t('device.identified', lang)}
             </Badge>
           </div>
         </CardHeader>
         <CardContent className="space-y-0 p-0">
-          {/* Device header */}
           <div className="p-4 pb-3 flex items-center gap-3">
             <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${brandStyle.gradient} flex items-center justify-center shadow-lg`}>
               <BrandIcon className="h-6 w-6 text-white" />
@@ -88,7 +90,6 @@ export function DeviceInfoCard() {
 
           <Separator className="bg-emerald-500/10" />
 
-          {/* Info grid */}
           <div className="p-4 grid grid-cols-2 gap-x-4 gap-y-3">
             {infoItems.map((item, index) => {
               const ItemIcon = item.icon;

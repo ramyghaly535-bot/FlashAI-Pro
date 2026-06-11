@@ -1,6 +1,8 @@
 'use client';
 
 import { useFlashingStore, type FirmwareInfo } from '@/store/flashing-store';
+import { useLanguageStore } from '@/store/language-store';
+import { t, isRTL } from '@/lib/i18n';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -9,6 +11,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 export function FirmwareAnalysisPanel() {
   const { stage, deviceInfo, firmwareInfo, setFirmwareInfo, setStage, addLog, setDownloadProgress } = useFlashingStore();
+  const { lang } = useLanguageStore();
+  const rtl = isRTL(lang);
   const isAnalyzing = stage === 'analyzing';
 
   const handleAnalyze = async () => {
@@ -65,19 +69,19 @@ export function FirmwareAnalysisPanel() {
           <CardTitle className="flex items-center gap-2 text-sm font-semibold">
             <Brain className="h-4 w-4 text-emerald-400" />
             <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-300">
-              AI Firmware Analysis
+              {t('firmware.title', lang)}
             </span>
           </CardTitle>
           {firmwareInfo && (
             <Badge className="bg-emerald-500/20 text-emerald-400 border-emerald-500/30 text-[10px]">
-              <CheckCircle2 className="h-3 w-3 mr-1" />
-              Analysis Complete
+              <CheckCircle2 className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'}`} />
+              {t('firmware.analysis_complete', lang)}
             </Badge>
           )}
           {isAnalyzing && (
             <Badge className="bg-purple-500/20 text-purple-400 border-purple-500/30 text-[10px]">
-              <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-              AI Processing
+              <Loader2 className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'} animate-spin`} />
+              {t('firmware.ai_processing', lang)}
             </Badge>
           )}
         </div>
@@ -86,7 +90,7 @@ export function FirmwareAnalysisPanel() {
         {!deviceInfo && (
           <div className="flex flex-col items-center justify-center py-6 text-muted-foreground/50">
             <Brain className="h-8 w-8 mb-2" />
-            <p className="text-xs">Connect a device first</p>
+            <p className="text-xs">{t('firmware.connect_first', lang)}</p>
           </div>
         )}
 
@@ -97,7 +101,9 @@ export function FirmwareAnalysisPanel() {
                 <Sparkles className="h-4 w-4 text-emerald-400 mt-0.5 shrink-0" />
                 <div>
                   <p className="text-xs text-foreground/80">
-                    AI will analyze your <span className="text-emerald-400 font-semibold">{deviceInfo.brand} {deviceInfo.model}</span> and fetch the latest official signed firmware from {deviceInfo.brand} servers.
+                    {t('firmware.ai_will', lang)}{' '}
+                    <span className="text-emerald-400 font-semibold">{deviceInfo.brand} {deviceInfo.model}</span>{' '}
+                    {t('firmware.and_fetch', lang)} {deviceInfo.brand} {t('firmware.servers', lang)}
                   </p>
                 </div>
               </div>
@@ -106,8 +112,8 @@ export function FirmwareAnalysisPanel() {
               onClick={handleAnalyze}
               className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:shadow-[0_0_30px_rgba(16,185,129,0.5)] transition-all duration-300"
             >
-              <Brain className="h-4 w-4 mr-2" />
-              Analyze &amp; Fetch Official Firmware
+              <Brain className={`h-4 w-4 ${rtl ? 'ml-2' : 'mr-2'}`} />
+              {t('firmware.analyze_btn', lang)}
             </Button>
           </div>
         )}
@@ -130,8 +136,8 @@ export function FirmwareAnalysisPanel() {
                 </motion.div>
               </div>
               <div className="text-center">
-                <p className="text-xs text-emerald-400/80 font-mono animate-pulse">AI is analyzing device parameters...</p>
-                <p className="text-[10px] text-muted-foreground/60 mt-1">Contacting {deviceInfo?.brand} servers</p>
+                <p className="text-xs text-emerald-400/80 font-mono animate-pulse">{t('firmware.analyzing_msg', lang)}</p>
+                <p className="text-[10px] text-muted-foreground/60 mt-1">{t('firmware.contacting', lang, { brand: deviceInfo?.brand ?? '' })}</p>
               </div>
             </motion.div>
           )}
@@ -146,14 +152,14 @@ export function FirmwareAnalysisPanel() {
               className="space-y-3"
             >
               <div className="grid grid-cols-2 gap-2">
-                <FirmwareStat icon={Shield} label="Version" value={firmwareInfo.version} />
-                <FirmwareStat icon={Hash} label="Build" value={firmwareInfo.buildNumber} />
-                <FirmwareStat icon={Server} label="Region" value={firmwareInfo.region} />
-                <FirmwareStat icon={Calendar} label="Released" value={firmwareInfo.releaseDate} />
-                <FirmwareStat icon={Globe} label="Size" value={firmwareInfo.fileSize} />
+                <FirmwareStat icon={Shield} label={t('firmware.version', lang)} value={firmwareInfo.version} />
+                <FirmwareStat icon={Hash} label={t('firmware.build', lang)} value={firmwareInfo.buildNumber} />
+                <FirmwareStat icon={Server} label={t('firmware.region', lang)} value={firmwareInfo.region} />
+                <FirmwareStat icon={Calendar} label={t('firmware.released', lang)} value={firmwareInfo.releaseDate} />
+                <FirmwareStat icon={Globe} label={t('firmware.size', lang)} value={firmwareInfo.fileSize} />
                 <FirmwareStat
                   icon={Shield}
-                  label="Signed"
+                  label={t('firmware.signed', lang)}
                   value={firmwareInfo.signedStatus}
                   valueClass={firmwareInfo.signedStatus === 'Signed' ? 'text-emerald-400' : 'text-amber-400'}
                 />
@@ -166,8 +172,8 @@ export function FirmwareAnalysisPanel() {
                   onClick={handleDownload}
                   className="w-full bg-emerald-600 hover:bg-emerald-500 text-white shadow-[0_0_20px_rgba(16,185,129,0.3)] transition-all duration-300"
                 >
-                  <Server className="h-4 w-4 mr-2" />
-                  Download &amp; Flash Firmware
+                  <Server className={`h-4 w-4 ${rtl ? 'ml-2' : 'mr-2'}`} />
+                  {t('firmware.download_btn', lang)}
                 </Button>
               )}
             </motion.div>
