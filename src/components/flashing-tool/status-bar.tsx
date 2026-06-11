@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { useFlashingStore } from '@/store/flashing-store';
 import { Badge } from '@/components/ui/badge';
 import { Activity, Cpu, Wifi, Shield, Clock } from 'lucide-react';
@@ -19,7 +20,14 @@ const stageLabels: Record<string, { label: string; color: string }> = {
 export function StatusBar() {
   const { stage, deviceConnected, logs } = useFlashingStore();
   const stageInfo = stageLabels[stage] || stageLabels.idle;
-  const now = new Date();
+  const [time, setTime] = useState<string | null>(null);
+
+  useEffect(() => {
+    const tick = () => setTime(new Date().toLocaleTimeString('en-US', { hour12: false }));
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, []);
 
   return (
     <motion.div
@@ -52,7 +60,7 @@ export function StatusBar() {
         </div>
         <div className="hidden sm:flex items-center gap-1">
           <Clock className="h-3 w-3" />
-          <span>{now.toLocaleTimeString('en-US', { hour12: false })}</span>
+          <span>{time ?? '--:--:--'}</span>
         </div>
       </div>
     </motion.div>
