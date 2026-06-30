@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 
 export type DeviceBrand = 'Apple' | 'Samsung' | 'Xiaomi' | null;
-export type DeviceMode = 'DFU/Recovery/Normal' | 'Download_Mode/ADB' | 'Fastboot/EDL' | null;
+export type DeviceMode = string | null;
 export type AppStage = 'idle' | 'scanning' | 'detected' | 'analyzing' | 'downloading' | 'flashing' | 'completed' | 'error';
 
 export interface DeviceInfo {

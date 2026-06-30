@@ -26,7 +26,7 @@ export function FirmwareAnalysisPanel() {
       const res = await fetch('/api/analyze', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ brand: deviceInfo.brand, model: deviceInfo.model }),
+        body: JSON.stringify({ brand: deviceInfo.brand, model: deviceInfo.model, modelCode: deviceInfo.modelCode, region: deviceInfo.region, mode: deviceInfo.mode }),
       });
       const data = await res.json();
 
@@ -34,10 +34,15 @@ export function FirmwareAnalysisPanel() {
       setStage('idle');
 
       addLog({ type: 'success', message: `AI Analysis Complete: Recommended firmware ${data.firmware.version} (${data.firmware.buildNumber})`, source: 'AI Engine' });
-      addLog({ type: 'info', message: `Server: ${data.firmware.serverUrl.substring(0, 60)}...`, source: 'AI Engine' });
+      addLog({ type: 'info', message: `AI Confidence: ${data.analysis.confidence}% | Compatibility: ${data.analysis.compatibilityScore || 'N/A'}%`, source: 'AI Engine' });
+      addLog({ type: 'info', message: `Server: ${data.firmware.serverUrl.substring(0, 70)}...`, source: 'AI Engine' });
       addLog({ type: 'info', message: `Signed Status: ${data.firmware.signedStatus} | Region: ${data.firmware.region}`, source: 'AI Engine' });
-      addLog({ type: 'success', message: `File Size: ${data.firmware.fileSize} | Hash: ${data.firmware.fileHash.substring(0, 16)}...`, source: 'AI Engine' });
-      addLog({ type: 'info', message: `AI Confidence: ${data.analysis.confidence}% - ${data.analysis.reason}`, source: 'AI Engine' });
+      addLog({ type: 'success', message: `File Size: ${data.firmware.fileSize} | Hash: ${data.firmware.fileHash.substring(0, 20)}...`, source: 'AI Engine' });
+      if (data.analysis.warnings?.length > 0) {
+        for (const w of data.analysis.warnings) {
+          addLog({ type: 'warning', message: w, source: 'AI Engine' });
+        }
+      }
     } catch {
       addLog({ type: 'error', message: 'Failed to analyze firmware. Please check network connection.', source: 'AI Engine' });
       setStage('idle');
