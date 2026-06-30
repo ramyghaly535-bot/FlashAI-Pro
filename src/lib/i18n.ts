@@ -16,6 +16,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'hero.desc': 'AI-powered firmware analysis, multi-threaded download engine, and automated flashing for Apple, Samsung, and Xiaomi devices.',
 
     // Status Bar
+    'status.idle': 'Ready',
     'status.ready': 'Ready',
     'status.scanning': 'Scanning USB',
     'status.detected': 'Device Detected',
@@ -113,6 +114,7 @@ const translations: Record<Lang, Record<string, string>> = {
     'hero.desc': 'تحليل البرامج الثابتة بالذكاء الاصطناعي، محرك تحميل متعدد المسارات، وتثبيت تلقائي لأجهزة أبل، سامسونج، وشاومي.',
 
     // Status Bar
+    'status.idle': 'جاهز',
     'status.ready': 'جاهز',
     'status.scanning': 'فحص USB',
     'status.detected': 'تم اكتشاف الجهاز',
