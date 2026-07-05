@@ -11,6 +11,7 @@ import { FirmwareAnalysisPanel } from '@/components/flashing-tool/firmware-analy
 import { DownloadManager } from '@/components/flashing-tool/download-manager';
 import { TerminalConsole } from '@/components/flashing-tool/terminal-console';
 import { StatusBar } from '@/components/flashing-tool/status-bar';
+import { PwaInstallPrompt } from '@/components/pwa-install-prompt';
 import { Zap, RotateCcw, Shield, Cpu, Smartphone, Languages } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
@@ -204,6 +205,9 @@ export default function FlashingToolPage() {
 
       {/* Status Bar */}
       <StatusBar />
+
+      {/* PWA Install Prompt */}
+      <PwaInstallPrompt />
     </div>
   );
 }
