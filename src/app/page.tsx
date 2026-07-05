@@ -11,8 +11,8 @@ import { FirmwareAnalysisPanel } from '@/components/flashing-tool/firmware-analy
 import { DownloadManager } from '@/components/flashing-tool/download-manager';
 import { TerminalConsole } from '@/components/flashing-tool/terminal-console';
 import { StatusBar } from '@/components/flashing-tool/status-bar';
-import { PwaInstallPrompt } from '@/components/pwa-install-prompt';
-import { Zap, RotateCcw, Shield, Cpu, Smartphone, Languages } from 'lucide-react';
+import { PwaInstallPrompt, PwaInstallStatus } from '@/components/pwa-install-prompt';
+import { Zap, RotateCcw, Shield, Cpu, Smartphone, Languages, Download } from 'lucide-react';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 
@@ -71,6 +71,7 @@ export default function FlashingToolPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <PwaInstallStatus />
             <Badge variant="outline" className="text-emerald-400 border-emerald-500/30 text-[10px] hidden sm:flex">
               <Shield className={`h-3 w-3 ${rtl ? 'ml-1' : 'mr-1'}`} />
               {t('header.encrypted', lang)}

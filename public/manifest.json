@@ -1,17 +1,63 @@
 {
-  "name": "FlashAI Pro",
-  "short_name": "FlashAI",
-  "description": "AI-Powered Multi-OS Mobile Flashing Engine - Apple, Samsung, Xiaomi",
+  "name": "FlashAI Pro - محرك الفلاش الذكي",
+  "short_name": "FlashAI Pro",
+  "description": "Professional AI-powered multi-OS mobile flashing software supporting Apple iOS, Samsung, and Xiaomi devices with automated firmware analysis and one-click factory restore.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "any",
   "background_color": "#060d0a",
   "theme_color": "#059669",
-  "orientation": "any",
-  "scope": "/",
   "lang": "ar",
   "dir": "rtl",
-  "categories": ["utilities", "productivity", "developer tools"],
+  "categories": ["utilities", "productivity"],
+  "prefer_related_applications": false,
   "icons": [
+    {
+      "src": "/icons/icon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-36x36.png",
+      "sizes": "36x36",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-120x120.png",
+      "sizes": "120x120",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-167x167.png",
+      "sizes": "167x167",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-180x180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
     {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
@@ -31,6 +77,37 @@
       "purpose": "any"
     }
   ],
-  "screenshots": [],
-  "prefer_related_applications": false
+  "screenshots": [
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "FlashAI Pro - Main Interface"
+    },
+    {
+      "src": "/icons/icon-1024.png",
+      "sizes": "1024x1024",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "FlashAI Pro - Desktop View"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "فحص الجهاز",
+      "short_name": "فحص",
+      "description": "Scan for connected devices",
+      "url": "/?action=scan",
+      "icons": [{ "src": "/icons/icon-96x96.png", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "display_override": ["standalone", "window-controls-overlay", "minimal-ui"],
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "auto"
+  }
 }
